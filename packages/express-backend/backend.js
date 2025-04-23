@@ -54,16 +54,27 @@ const addUser = (user) => {
   return user;
 };
 
-//const deleteUser = (user) => {
-//  users["users_list"].
+const deleteUser = (userID) => {
+  users["users_list"] = users["users_list"].filter(
+    (user) => user["id"] === userID
+  );
+}
 
 app.get("/users", (req, res) => {
   const name = req.query.name;
-  if (name != undefined) {
+  const job = req.query.job;
+  if (job == undefined && name != undefined) {
     let result = findUserByName(name);
     result = { users_list: result };
     res.send(result);
-  } else {
+  } else if(job != undefined && name != undefined) { // #7
+    let result = findUserByName(name).filter(
+      (user) => user["job"] === job
+    );
+    result = { users_list : result };
+    res.send(result);
+  } 
+  else {
     res.send(users);
   }
 });
@@ -84,16 +95,16 @@ app.post("/users", (req, res) => {
   res.send();
 });
 
-/*
-app.delete("/users", (req, res) => {
-  const userToDelete = req.body;
-  deleteUser(userToDelete);
+app.delete("/users/:id", (req, res) => {
+  const id = req.params["id"];
+  deleteUser(id);
   res.send();
 });
-*/
 
 app.listen(port, () => {
   console.log(
     `Example app listening at http://localhost:${port}`
   );
 });
+
+// curl -X POST http://localhost:8000/users -H "Content-Type: application/json" -d "{\"id\": \"qwe123\", \"job\": \"Zookeeper\", \"name\": \"Cindy\"}"
