@@ -61,7 +61,15 @@ function MyApp() {
   function removeOneCharacter(index) {
     console.log("removing");
     const updated = characters.filter((character, i) => {
-      return i !== index;
+      if(i !== index) {
+        deleteUser(character)
+          .then((res) => { if(res.status === 204) console.log("good");
+            else if(res.status === 404) console.log("bad");
+            else console.log("something is wrong");
+          });
+        return true;
+      }
+      else { return false; }
     });
     setCharacters(updated);
   }
@@ -87,6 +95,18 @@ function MyApp() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(person),
+    });
+
+    return promise;
+  }
+
+  function deleteUser(person) {
+    const promise = fetch("Http://localhost:8000/users", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: person.id }),
     });
 
     return promise;

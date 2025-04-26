@@ -59,9 +59,11 @@ const addUser = (user) => {
 };
 
 const deleteUser = (userID) => {
+  let initLength = users["users_list"].length;
   users["users_list"] = users["users_list"].filter(
     (user) => user["id"] === userID
   );
+  return (initLength !== users["users_list"].length);
 }
 
 app.get("/users", (req, res) => {
@@ -100,11 +102,13 @@ app.post("/users", (req, res) => {
   res.status(201).send(user);
 });
 
-app.delete("/users/:id", (req, res) => {
-  const id = req.params["id"];
+app.delete("/users", (req, res) => {
+  const id = req.body.id;
   console.log("here: " + id);
-  deleteUser(id);
-  res.send();
+  if(deleteUser(id))
+    res.status(204).send();
+  else
+    res.status(404).send();
 });
 
 app.listen(port, () => {
