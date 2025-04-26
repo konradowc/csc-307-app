@@ -61,15 +61,16 @@ function MyApp() {
   function removeOneCharacter(index) {
     console.log("removing");
     const updated = characters.filter((character, i) => {
-      if(i !== index) {
+      if(i !== index)
+        return true;
+      else { 
         deleteUser(character)
           .then((res) => { if(res.status === 204) console.log("good");
             else if(res.status === 404) console.log("bad");
             else console.log("something is wrong");
-          });
-        return true;
+        });
+        return false; 
       }
-      else { return false; }
     });
     setCharacters(updated);
   }
