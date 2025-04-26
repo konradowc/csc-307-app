@@ -52,6 +52,8 @@ const findUserById = (id) =>
   users["users_list"].find((user) => user["id"] === id);
 
 const addUser = (user) => {
+  user.id = Math.round(Math.random() * 999999);
+  console.log("adding this id: " + user.id);
   users["users_list"].push(user);
   return user;
 };
@@ -93,12 +95,14 @@ app.get("/users/:id", (req, res) => {
 
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
-  addUser(userToAdd);
-  res.send();
+  console.log("adding a user in backend");
+  let user = addUser(userToAdd);
+  res.status(201).send(user);
 });
 
 app.delete("/users/:id", (req, res) => {
   const id = req.params["id"];
+  console.log("here: " + id);
   deleteUser(id);
   res.send();
 });
