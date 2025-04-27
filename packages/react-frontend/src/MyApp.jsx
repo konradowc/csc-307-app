@@ -59,14 +59,14 @@ function MyApp() {
   );
 
   function removeOneCharacter(index) {
-    console.log("removing");
+    //console.log("removing");
     const updated = characters.filter((character, i) => {
       if(i !== index)
         return true;
       else { 
         deleteUser(character)
-          .then((res) => { if(res.status === 204) console.log("good");
-            else if(res.status === 404) console.log("bad");
+          .then((res) => { if(res.status === 204) console.log("204-good");
+            else if(res.status === 404) console.log("404-bad-" + res.text());
             else console.log("something is wrong");
         });
         return false; 

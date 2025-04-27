@@ -61,7 +61,7 @@ const addUser = (user) => {
 const deleteUser = (userID) => {
   let initLength = users["users_list"].length;
   users["users_list"] = users["users_list"].filter(
-    (user) => user["id"] === userID
+    (user) => user["id"] !== userID
   );
   return (initLength !== users["users_list"].length);
 }
@@ -108,7 +108,7 @@ app.delete("/users", (req, res) => {
   if(deleteUser(id))
     res.status(204).send();
   else
-    res.status(404).send();
+    res.status(404).send("id not found: " + id);
 });
 
 app.listen(port, () => {
