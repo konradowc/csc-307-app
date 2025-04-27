@@ -2,9 +2,12 @@
 import express from "express";
 import cors from "cors";
 
+import db from "./user-services.js";
+
 const app = express();
 const port = 8000;
 
+/*
 const users = {
   users_list: [
     {
@@ -34,6 +37,7 @@ const users = {
     }
   ]
 };
+*/
 
 app.use(cors());
 app.use(express.json());
@@ -42,6 +46,9 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+// helper functions
+
+/*
 const findUserByName = (name) => {
   return users["users_list"].filter(
     (user) => user["name"] === name
@@ -65,29 +72,38 @@ const deleteUser = (userID) => {
   );
   return (initLength !== users["users_list"].length);
 }
+*/
+
+// application HTML requests
 
 app.get("/users", (req, res) => {
   const name = req.query.name;
   const job = req.query.job;
-  if (job == undefined && name != undefined) {
-    let result = findUserByName(name);
+  
+  let result;
+  db.getUsers().then((users) => { result = users; })
+    .catch((error) => { console.log(error); });
+
+  if(job == undefined && name == undefined) {
+    res.send(result);
+  }
+  else if(job == undefined && name != undefined) {
     result = { users_list: result };
     res.send(result);
-  } else if(job != undefined && name != undefined) { // #7
-    let result = findUserByName(name).filter(
-      (user) => user["job"] === job
-    );
+  } 
+  else { // job != undefined && name != undefined (#7)
+    result = result.filter(
+      (user) => user["job"] === job);
     result = { users_list : result };
     res.send(result);
-  } 
-  else {
-    res.send(users);
   }
 });
 
 app.get("/users/:id", (req, res) => {
   const id = req.params["id"]; //or req.params.id
-  let result = findUserById(id);
+  let result;
+  db.findUserById(id).then((id) => { result = id; })
+    .catch((error) => { console.log(error); });
   if (result === undefined) {
     res.status(404).send("Resource not found.");
   } else {
@@ -98,14 +114,19 @@ app.get("/users/:id", (req, res) => {
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
   console.log("adding a user in backend");
-  let user = addUser(userToAdd);
-  res.status(201).send(user);
+  let result;
+  db.addUser(userToAdd).then((user) => { result = user; })
+  .catch((error) => { console.log(error); });
+  res.status(201).send(result);
 });
 
 app.delete("/users", (req, res) => {
   const id = req.body.id;
   console.log("here: " + id);
-  if(deleteUser(id))
+  let result;
+  db.deleteUser(id).then((del) => { result = (del != null); })
+    .catch((error) => { console.log(error); });
+  if(result)
     res.status(204).send();
   else
     res.status(404).send("id not found: " + id);
