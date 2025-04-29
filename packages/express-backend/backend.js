@@ -81,7 +81,7 @@ app.get("/users", (req, res) => {
   const job = req.query.job;
   
   let result;
-  db.getUsers().then((users) => { result = users; })
+  db.getUsers(name, job).then((users) => { result = users; })
     .catch((error) => { console.log(error); });
 
   if(job == undefined && name == undefined) {

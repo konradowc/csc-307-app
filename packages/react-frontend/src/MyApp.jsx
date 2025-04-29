@@ -107,7 +107,7 @@ function MyApp() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id: person.id }),
+      body: JSON.stringify({ _id: person.id }),
     });
 
     return promise;
